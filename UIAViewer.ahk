@@ -50,12 +50,12 @@ Gui Add, CheckBox, xp+160 yp-2 w120 vCBDeepSearch, Deep search (slower)
 if DeepSearchFromPoint
 	GuiControl,, CBDeepSearch, 1
 
-Gui, Add, Tab3, x320 y8 w300 h505 vTabsMain, Tree view|Macro creator
-Gui, Tab, 1
+Gui, Add, Tab3, x320 y8 w300 h505 vTabsMain, Macro creator|Tree view
+Gui, Tab, 2
 Gui Add, TreeView, x+5 y+5 w200 h400 hwndhMainTreeView vMainTreeView gMainTreeView
 Gui Add, Button, xp+40 y+5 w192 vButRefreshTreeView gButRefreshTreeView +Disabled, Start capturing to show tree
 
-Gui, Tab, 2
+Gui, Tab, 1
 Gui, Add, Text, x+10 y+10, Search function: 
 Gui, Add, DropDownList, x+10 yp-%_ysoffset% w190 vDDLMacroFunction, WaitElementExist|FindFirstBy||FindAllBy|No function
 Gui, Add, Text, x331 y+10, Element name:
@@ -761,11 +761,6 @@ Esc::gosub ButCapture
 		
 		if (Stored.WinClass != "#32768") && !(RegexMatch(ReverseContent(PreviousContent), "m`n)WinExist\(""(.*) ahk_exe (.*) ahk_class (.*)""\)$", match) && (match1 = Stored.WinTitle) && (match2 = Stored.WinExe) && (match3 = Stored.WinClass)) {
 			WinGet, dl, ID, Stored.WinTitle
-			wingetter=
-			(LTrim
-			 WinGet, %MacroElementName%, ID, 
-			)
-			
 			lister=
 			(
 				if 
@@ -778,8 +773,13 @@ Esc::gosub ButCapture
 					Stored.WinTitle := ar[indx]
 				}
 			}
-			
-			wingetter .= " " . Stored.WinTitle "`n"
+			tit := Stored.WinTitle
+			ex := Stored.WinExe
+			wingetter=
+			(LTrim
+			 %MacroElementName% := WinExist("%tit% ahk_exe %ex%")
+			 
+			) 
 			MacroContent := wingetter
 			 . "WinActivate, ahk_id %" . MacroElementName .  "%`n"
 			 . "WinWaitActive, ahk_id %" . MacroElementName . "%`n" 
