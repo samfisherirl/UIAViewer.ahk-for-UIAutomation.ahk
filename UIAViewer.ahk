@@ -1,6 +1,5 @@
 ﻿#SingleInstance Force
 #NoEnv
-#Include WinTitleSearch.ahk
 SetWorkingDir %A_ScriptDir%
 SetBatchLines -1
 CoordMode, Mouse, Screen
@@ -67,8 +66,13 @@ Gui, Add, Text, x331 y+15, Timeout (ms):
 Gui, Add, Edit, x+23 yp-%_ysoffset% w50 Number vEditMacroTimeout, 10000
 Gui, Add, Text, x+10 yp+%_ysoffset% , Action:
 Gui, Add, DropDownList, x+10 yp-1 w85 gDDLMacroAction vDDLMacroAction, Click||ControlClick|Click("left")|Highlight|SetValue|Do nothing
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+Gui, Add, Text, x331 y+15, New input line:
+; new line of input data 
+
 Gui, Add, Text, x331 y+10, Start capturing and press the PrintScreen button`nto add functions.
-Gui, Add, Edit, x331 y+10 w275 h350 vEditMacroContent, %A_Space% #Include lib\UIA_Interface.ahk`n SetTitleMatchMode, 2`n
+Gui, Add, Edit, x331 y+10 w275 h350 vEditMacroContent, %A_Space% #Include lib\UIA_Interface.ahk`n SetTitleMatchMode, 2`nglobal UIA := UIA_Interface()`n
 global UIA := UIA_Interface()
 Gui, Tab
 
@@ -79,7 +83,7 @@ Gui, Font
 SB_SetParts(380)
 SB_SetText("`tCurrent UIA Interface version: " UIA.__Version,2)
 
-Gui, Add, Text, x310 y0 w%SplitterW% h500 vSplitter1 gMoveSplitter1
+Gui, Add, Text, x310 y0 w%SplitterW% h600 vSplitter1 gMoveSplitter1
 Gui, Add, Text, x%_xoffsetfirst% y390 w300 h%SplitterW% vSplitter2 gMoveSplitter2
 ; Change the cursor when mouse is over splitter control
 OnMessage(WM_SETCURSOR := 0x20, "HandleMessage")
