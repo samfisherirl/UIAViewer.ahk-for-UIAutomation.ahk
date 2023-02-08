@@ -57,7 +57,7 @@ Gui Add, Button, xp+40 y+5 w192 vButRefreshTreeView gButRefreshTreeView +Disable
 
 Gui, Tab, 2
 Gui, Add, Text, x+10 y+10, Search function: 
-Gui, Add, DropDownList, x+10 yp-%_ysoffset% w190 vDDLMacroFunction, WaitElementExist|FindFirstBy||WaitElementNotExist|No function
+Gui, Add, DropDownList, x+10 yp-%_ysoffset% w190 vDDLMacroFunction, WaitElementExist|FindFirstBy||FindAllBy|No function
 Gui, Add, Text, x331 y+10, Element name:
 Gui, Add, Edit, x+15 yp-%_ysoffset% w70 vEditMacroElementName, el 
 Gui, Add, CheckBox, x+10 yp+%_ysoffset% w100 vCBMacroCaseSensitive Checked, Case sensitive
@@ -759,8 +759,6 @@ Esc::gosub ButCapture
 				MacroContent .= "`n" . "try {`n " . MacroElementName . "[1]." MacroAction (SubStr(MacroAction, 0, 1) = ")" ? "" : "()") "`n}`n catch e{ `n" . MacroElementName . "." MacroAction (SubStr(MacroAction, 0, 1) = ")" ? "" : "()`n}")
 		}
 		
-		
-		
 		if (Stored.WinClass != "#32768") && !(RegexMatch(ReverseContent(PreviousContent), "m`n)WinExist\(""(.*) ahk_exe (.*) ahk_class (.*)""\)$", match) && (match1 = Stored.WinTitle) && (match2 = Stored.WinExe) && (match3 = Stored.WinClass)) {
 			WinGet, dl, ID, Stored.WinTitle
 			wingetter=
@@ -772,7 +770,7 @@ Esc::gosub ButCapture
 			(
 				if 
 			)
-			if (StrLen(Stored.WinTitle) > 20)
+			if (StrLen(Stored.WinTitle) > 20) ;if title is more than 20 characters
 			{
 				try { 
 					ar := StrSplit(Stored.WinTitle, "-")
