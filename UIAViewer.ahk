@@ -60,7 +60,7 @@ Gui, Add, Text, x+10 y+10, Search function:
 Gui, Add, DropDownList, x+10 yp-%_ysoffset% w190 vDDLMacroFunction, WaitElementExist|FindFirstBy||FindAllBy|No function
 Gui, Add, Text, x331 y+10, Element name:
 Gui, Add, Edit, x+15 yp-%_ysoffset% w70 vEditMacroElementName, el 
-Gui, Add, CheckBox, x+10 yp+%_ysoffset% w100 vCBMacroCaseSensitive Checked, Case sensitive
+Gui, Add, CheckBox, x+10 yp+%_ysoffset% w100 vCBMacroCaseSensitive, Case sensitive
 Gui, Add, Text, x331 y+15, Match mode:
 Gui, Add, DropDownList, x+25 yp-%_ysoffset% w190 vDDLMacroMatchMode, 3: Exact|2: Partial (anywhere)||1: Partial (from beginning)|RegEx
 Gui, Add, Text, x331 y+15, Timeout (ms):
