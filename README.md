@@ -32,6 +32,7 @@ later today and this week Ill be adding:
 - credit to the original creator (sorry I will add asap)
 - more ideas flowing
 
+![Screenshot_20230211_045358](https://user-images.githubusercontent.com/98753696/218272236-10996a2c-593e-46b7-a1a6-7094cc9d4dc3.png)
 
 
 The [1] is going to be for findallby which I will be changing. Please ignore for now. 
