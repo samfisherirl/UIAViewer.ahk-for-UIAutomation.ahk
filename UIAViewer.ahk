@@ -67,13 +67,32 @@ Gui, Add, Edit, x+23 yp-%_ysoffset% w50 Number vEditMacroTimeout, 10000
 Gui, Add, Text, x+10 yp+%_ysoffset% , Action:
 Gui, Add, DropDownList, x+10 yp-1 w85 gDDLMacroAction vDDLMacroAction, Click||ControlClick|Click("left")|Highlight|SetValue|Do nothing
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-Gui, Add, Text, x331 y+15, New input line:
-; new line of input data 
 
-Gui, Add, Text, x331 y+10, Start capturing and press the PrintScreen button`nto add functions.
-Gui, Add, Edit, x331 y+10 w275 h350 vEditMacroContent, %A_Space% #Include lib\UIA_Interface.ahk`n SetTitleMatchMode, 2`nglobal UIA := UIA_Interface()`n
+Gui, Add, Text, x331 y+15, New input line:
+; new line of input data
+
+			; ##########################################
+			; Code generation inserted in GUI Box here
+			; ##########################################
+			; ##########################################
+			; Code generation inserted in GUI Box here
+			; ##########################################
+			
+			
+value_for_top_of_code_generation=
+(
+#Include lib\UIA_Interface.ahk
+SetTitleMatchMode, 2
 global UIA := UIA_Interface()
+)
+
+			; ##########################################
+			;    Part 1 ends here, Part 2 Line ~760
+			;    ctrl+F "asdf" to find either section
+			; ########################################## 
+			
+Gui, Add, Text, x331 y+10, Start capturing and press the F3 Key`nto add functions.
+Gui, Add, Edit, x331 y+10 w275 h350 vEditMacroContent, %value_for_top_of_code_generation%
 Gui, Tab
 
 Gui, Font, Bold
@@ -730,7 +749,7 @@ Esc::gosub ButCapture
 
 ;print((((((()))))))
 
-~PrintScreen::
+~F3::
 	global DDLMacroActionValue
 	Gui Main: Default
 	GuiControlGet, FocusedTab,, TabsMain
@@ -746,7 +765,23 @@ Esc::gosub ButCapture
 		GuiControlGet, MacroAction,, DDLMacroAction
 		MacroContent := """ControlType=" UIA_Enum.UIA_ControlTypeId(Stored.Element.CurrentControlType) ((elName := Stored.Element.CurrentName) ? " AND Name='" SanitizeInput(elName) "'" : "") ((elAID := Stored.Element.CurrentAutomationId) ? " AND AutomationId='" SanitizeInput(elAID) "'" : "") """"
 		
-		
+		func=
+	(LTrim
+	loop, 10
+		{
+		try {
+   
+	)
+		finish= 
+	(LTrim
+			
+			break
+		} catch e{
+				Sleep, 100
+			}
+		}
+
+	)
 		
 		if (MacroFunction != "No function") {
 			RegexMatch(MacroMatchMode, "\d(?=:)", match)
@@ -755,20 +790,18 @@ Esc::gosub ButCapture
 			MacroContent .= StrReplace(MacroTimeout, " ") = "10000" ? "" : MacroTimeout ","
 			MacroContent := MacroFunction "(" MacroContent ")"
 			MacroContent := RegexReplace(MacroContent, ",*\)$", ")")
-			if MacroElementName
-				MacroContent := MacroElementName " := " . MacroElementName . "." MacroContent
+			if MacroElementName {
+				MacroContent := func . MacroElementName " := " . MacroElementName . "." MacroContent . finish
+				}
 			if (MacroAction = "SetValue")
 				MacroContent .= ".Value := """ DDLMacroActionValue """"
 			else if (MacroAction != "Do nothing")
-				MacroContent .= "`n" . "try {`n " . MacroElementName . "[1]." MacroAction (SubStr(MacroAction, 0, 1) = ")" ? "" : "()") "`n}`n catch e{ `n" . MacroElementName . "." MacroAction (SubStr(MacroAction, 0, 1) = ")" ? "" : "()`n}")
+				MacroContent .= "`n" . func . MacroElementName . "." MacroAction (SubStr(MacroAction, 0, 1) = ")" ? "" : "()  " . finish)
+				
 		}
 		
 		if (Stored.WinClass != "#32768") && !(RegexMatch(ReverseContent(PreviousContent), "m`n)WinExist\(""(.*) ahk_exe (.*) ahk_class (.*)""\)$", match) && (match1 = Stored.WinTitle) && (match2 = Stored.WinExe) && (match3 = Stored.WinClass)) {
 			WinGet, dl, ID, Stored.WinTitle
-			lister=
-			(
-				if 
-			)
 			if (StrLen(Stored.WinTitle) > 20) ;if title is more than 20 characters
 			{
 				try { 
@@ -779,17 +812,64 @@ Esc::gosub ButCapture
 			}
 			tit := Stored.WinTitle
 			ex := Stored.WinExe
+			; ##########################################
+			; Code generation inserted in GUI Box here
+			; ###############asdf#######################
+			; ##########################################
+			; Code generation inserted in GUI Box here
+			; ##########################################
+
+
 			wingetter=
 			(LTrim
 			 %MacroElementName% := WinExist("%tit% ahk_exe %ex%")
 			 
 			) 
-			MacroContent := wingetter
-			 . "WinActivate, ahk_id %" . MacroElementName .  "%`n"
-			 . "WinWaitActive, ahk_id %" . MacroElementName . "%`n" 
-			 . MacroElementName " := UIA.ElementFromHandle(" MacroElementName ")`n`n"
-			 . MacroContent
-
+			
+				
+				
+			MacroPrelude :=  "WinActivate, ahk_id %" . MacroElementName .  "%`n" . "WinWaitActive, ahk_id %" . MacroElementName . "%`n"  
+			 . MacroElementName " := UIA.ElementFromHandle(" MacroElementName ")`n" 
+			 ; macro content (click or SetValue()) starts here !
+			  
+			
+			Function=
+			(LTrim
+			
+			%wingetter%
+			
+			%MacroElementName% := UI(%MacroElementName%)
+			; the handle can be re-used for various actions
+			
+			Do_Action(%MacroElementName%)
+			
+			
+			UI(%MacroElementName%){
+			%MacroPrelude%return %MacroElementName%
+			}
+				
+			Do_Action(%MacroElementName%){
+			%MacroContent%
+			}
+			)
+				
+				
+				MacroContent := Function
+			
+			
+			
+			
+			
+			
+			; ############################################
+			; values in the GUI box for the code ends here
+			; ############################################
+			; ############################################
+			; values in the GUI box for the code ends here
+			; ############################################
+			; ############################################
+			; values in the GUI box for the code ends here
+			; ############################################
 		}
 		
 		
