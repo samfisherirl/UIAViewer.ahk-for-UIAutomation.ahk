@@ -5,21 +5,21 @@ SetBatchLines -1
 CoordMode, Mouse, Screen
 DetectHiddenWindows, On
 
-DeepSearchFromPoint := False ; Sets the default value for the deep search checkbox. When set to True (or checked), UIAViewer iterates through the whole UIA tree to find the smallest element from mouse point. This might be very slow with large trees.
+DeepSearchFromPoint := False ; Sets the default value for the deep search checkbox. When set to True (or checked), UIAviewer - github.com/Descolada/UIAutomation iterates through the whole UIA tree to find the smallest element from mouse point. This might be very slow with large trees.
 
 global UIA := UIA_Interface(), IsCapturing := False, Stored := {}, Acc, EnableAccTree := False, MainGuiHwnd, SaveToClipboard
 Stored.TreeView := {}
 DDLMacroActionValue := ""
 Acc_Init()
 Acc_Error(1)
-
+global counting_functions := 0
 _xoffsetfirst := 8
 _xoffset := 5
 _yoffset := 20
 _ysoffset := 3
 _minSplitterPosX := 100, _maxSplitterPosX := 500, _minSplitterPosY := 100, _maxSplitterPosY := 500, SplitterW = 5
 
-Gui Main: New, AlwaysOnTop Resize hwndMainGuiHwnd, UIAViewer
+Gui Main: New, AlwaysOnTop Resize hwndMainGuiHwnd, UIAviewer - github.com/Descolada/UIAutomation
 Gui Main: Default
 
 Gui Add, GroupBox, x8 y10 w302 h130 vGBWindowInfo, Window/Control Info
@@ -59,7 +59,7 @@ Gui, Add, Text, x+10 y+10, Search function:
 Gui, Add, DropDownList, x+10 yp-%_ysoffset% w190 vDDLMacroFunction, WaitElementExist|FindFirstBy||FindAllBy|No function
 Gui, Add, Text, x331 y+10, Element name:
 Gui, Add, Edit, x+15 yp-%_ysoffset% w70 vEditMacroElementName, el 
-Gui, Add, CheckBox, x+10 yp+%_ysoffset% w100 vCBMacroCaseSensitive, Case sensitive
+Gui, Add, CheckBox, x+10 yp+%_ysoffset% w100 vCBMacroCaseSensitive Checked, Case sensitive
 Gui, Add, Text, x331 y+15, Match mode:
 Gui, Add, DropDownList, x+25 yp-%_ysoffset% w190 vDDLMacroMatchMode, 3: Exact|2: Partial (anywhere)||1: Partial (from beginning)|RegEx
 Gui, Add, Text, x331 y+15, Timeout (ms):
@@ -68,16 +68,16 @@ Gui, Add, Text, x+10 yp+%_ysoffset% , Action:
 Gui, Add, DropDownList, x+10 yp-1 w85 gDDLMacroAction vDDLMacroAction, Click||ControlClick|Click("left")|Highlight|SetValue|Do nothing
 
 
-Gui, Add, Text, x331 y+15, New input line:
+Gui, Add, Text, x331 y+15, Category of Matching:
+Gui, Add, DropDownList, x+25 yp-%_ysoffset% w140 vMatchCategory, Title & Exe||Title|Exe|`ClassName
+
 ; new line of input data
 
-			; ##########################################
-			; Code generation inserted in GUI Box here
-			; ##########################################
-			; ##########################################
-			; Code generation inserted in GUI Box here
-			; ##########################################
-			
+; ##########################################
+; For easy reading, using multi-line variables
+; tends to make future code more navigatable
+; ##########################################
+
 			
 value_for_top_of_code_generation=
 (
@@ -86,12 +86,8 @@ SetTitleMatchMode, 2
 global UIA := UIA_Interface()
 )
 
-			; ##########################################
-			;    Part 1 ends here, Part 2 Line ~760
-			;    ctrl+F "asdf" to find either section
-			; ########################################## 
 			
-Gui, Add, Text, x331 y+10, Start capturing and press the F3 Key`nto add functions.
+Gui, Add, Text, x331 y+10, Start capturing and press the F3 Key to add action.
 Gui, Add, Edit, x331 y+10 w275 h350 vEditMacroContent, %value_for_top_of_code_generation%
 Gui, Tab
 
@@ -108,7 +104,7 @@ Gui, Add, Text, x%_xoffsetfirst% y390 w300 h%SplitterW% vSplitter2 gMoveSplitter
 OnMessage(WM_SETCURSOR := 0x20, "HandleMessage")
 OnMessage(WM_MOUSEMOVE := 0x200, "HandleMessage") 
 
-Gui Show,, UIAViewer
+Gui Show,, UIAviewer - github.com/Descolada/UIAutomation
 Return
 
 MainGuiEscape:
@@ -232,7 +228,7 @@ ButCapture:
 				UpdateElementFields()
 				GuiControl, Main:, EditName, % "ERROR: " e.Message
 				if InStr(e.Message, "0x80070005")
-					GuiControl, Main:, EditValue, Try running UIAViewer with Admin privileges
+					GuiControl, Main:, EditValue, Try running UIAviewer - github.com/Descolada/UIAutomation with Admin privileges
 			}
 
 			WinGetTitle, wTitle, ahk_id %mHwnd%
@@ -746,11 +742,16 @@ ReverseContent(inp) {
 
 #If IsCapturing
 Esc::gosub ButCapture
-
-;print((((((()))))))
+ 
 
 ~F3::
-	global DDLMacroActionValue
+	global DDLMacroActionValue, counting_functions
+	counting_functions := counting_functions + 1
+	if (counting_functions > 1) {
+		countfunctions := counting_functions
+	} else {
+		 countfunctions := "" 
+		 }
 	Gui Main: Default
 	GuiControlGet, FocusedTab,, TabsMain
 	if (FocusedTab != "Macro creator")
@@ -759,27 +760,28 @@ Esc::gosub ButCapture
 		GuiControlGet, PreviousContent,, EditMacroContent
 		GuiControlGet, MacroFunction,, DDLMacroFunction
 		GuiControlGet, MacroMatchMode,, DDLMacroMatchMode
+		GuiControlGet, MatchCat,, MatchCategory
 		GuiControlGet, CaseSensitive,, CBMacroCaseSensitive
 		GuiControlGet, MacroElementName,, EditMacroElementName
 		GuiControlGet, MacroTimeout,, EditMacroTimeout
 		GuiControlGet, MacroAction,, DDLMacroAction
 		MacroContent := """ControlType=" UIA_Enum.UIA_ControlTypeId(Stored.Element.CurrentControlType) ((elName := Stored.Element.CurrentName) ? " AND Name='" SanitizeInput(elName) "'" : "") ((elAID := Stored.Element.CurrentAutomationId) ? " AND AutomationId='" SanitizeInput(elAID) "'" : "") """"
 		
-		func=
-	(LTrim
-	loop, 10
-		{
-		try {
-   
-	)
-		finish= 
-	(LTrim
-			
-			break
-		} catch e{
-				Sleep, 100
-			}
-		}
+		loop_try_function=
+(
+loop, 10
+  {
+  try {
+      
+)
+		loop_try_trailing_code= 
+	(
+
+       break
+   } catch e{
+      Sleep, 100
+     }
+  }
 
 	)
 		
@@ -791,12 +793,12 @@ Esc::gosub ButCapture
 			MacroContent := MacroFunction "(" MacroContent ")"
 			MacroContent := RegexReplace(MacroContent, ",*\)$", ")")
 			if MacroElementName {
-				MacroContent := func . MacroElementName " := " . MacroElementName . "." MacroContent . finish
+				MacroContent := loop_try_function . MacroElementName " := " . MacroElementName . "." MacroContent . loop_try_trailing_code
 				}
 			if (MacroAction = "SetValue")
-				MacroContent .= ".Value := """ DDLMacroActionValue """"
+				MacroContent .= MacroElementName . ".Value := """ DDLMacroActionValue """"
 			else if (MacroAction != "Do nothing")
-				MacroContent .= "`n" . func . MacroElementName . "." MacroAction (SubStr(MacroAction, 0, 1) = ")" ? "" : "()  " . finish)
+				MacroContent .= "`n" . loop_try_function . MacroElementName . "." MacroAction (SubStr(MacroAction, 0, 1) = ")" ? "" : "()  " . loop_try_trailing_code)
 				
 		}
 		
@@ -811,62 +813,55 @@ Esc::gosub ButCapture
 				}
 			}
 			tit := Stored.WinTitle
-			ex := Stored.WinExe
+			ex := " ahk_exe " . Stored.WinExe
+			cls := " ahk_class " . Stored.WinClass
+			if instr(MatchCat, "Title & Exe"){
+				MatchCat := tit . ex
+			}
+			if (MatchCat = "Exe"){
+				MatchCat := Trim(ex)
+			}
+			if (MatchCat = "Class"){
+				MatchCat := Trim(cls)
+			}
 			; ##########################################
 			; Code generation inserted in GUI Box here
 			; ###############asdf#######################
-			; ##########################################
-			; Code generation inserted in GUI Box here
-			; ##########################################
 
 
 			wingetter=
 			(LTrim
-			 %MacroElementName% := WinExist("%tit% ahk_exe %ex%")
+			 %MacroElementName% := WinExist("%MatchCat%")
 			 
 			) 
 			
-				
-				
-			MacroPrelude :=  "WinActivate, ahk_id %" . MacroElementName .  "%`n" . "WinWaitActive, ahk_id %" . MacroElementName . "%`n"  
+			MacroPrelude :=  " WinActivate, ahk_id %" . MacroElementName .  "%`n" . "   WinWaitActive, ahk_id %" . MacroElementName . "%`n  "  
 			 . MacroElementName " := UIA.ElementFromHandle(" MacroElementName ")`n" 
 			 ; macro content (click or SetValue()) starts here !
 			  
-			
+			sp := "  "
 			Function=
 			(LTrim
 			
 			%wingetter%
 			
-			%MacroElementName% := UI(%MacroElementName%)
+			%MacroElementName% := UI%countfunctions%(%MacroElementName%)
 			; the handle can be re-used for various actions
 			
-			Do_Action(%MacroElementName%)
+			Do_%MacroAction%%countfunctions%(%MacroElementName%)
 			
 			
-			UI(%MacroElementName%){
-			%MacroPrelude%return %MacroElementName%
+			UI%countfunctions%(%MacroElementName%){
+			%sp%%MacroPrelude%%sp%%sp%return %MacroElementName%
 			}
 				
-			Do_Action(%MacroElementName%){
-			%MacroContent%
-			}
+			Do_%MacroAction%%countfunctions%(%MacroElementName%){
+			%sp%%MacroContent%
+			%sp%}
 			)
-				
 				
 				MacroContent := Function
 			
-			
-			
-			
-			
-			
-			; ############################################
-			; values in the GUI box for the code ends here
-			; ############################################
-			; ############################################
-			; values in the GUI box for the code ends here
-			; ############################################
 			; ############################################
 			; values in the GUI box for the code ends here
 			; ############################################
@@ -874,7 +869,7 @@ Esc::gosub ButCapture
 		
 		
 		
-		GuiControl,, EditMacroContent, % PreviousContent ? PreviousContent "`n`n" MacroContent : MacroContent
+		GuiControl,, EditMacroContent, % value_for_top_of_code_generation "`n`n" MacroContent
 	}
 	return
 ~F4::
