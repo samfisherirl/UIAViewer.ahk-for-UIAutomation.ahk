@@ -4,6 +4,14 @@ UIAViewer.ahk for UIAutomation.ahk, with some modifications. All credit for the 
 
 
 
+![Screenshot_20230211_045358](https://user-images.githubusercontent.com/98753696/218272236-10996a2c-593e-46b7-a1a6-7094cc9d4dc3.png)
+
+
+The [1] is going to be for findallby which I will be changing. Please ignore for now. 
+
+![image](https://user-images.githubusercontent.com/98753696/217550580-17a22ce3-a662-4223-bd87-1b96221e8971.png)
+
+
 UIAutomation is tough. I was going to start by building a tool side by side with UIAViewer, and figured its just easier diving into an edit of the original.
 
 Problems I had with UIAViewer (I love the tool, but these can be challenging for new users):
@@ -31,12 +39,4 @@ later today and this week Ill be adding:
 - options to drill down or loop through just a given control
 - credit to the original creator (sorry I will add asap)
 - more ideas flowing
-
-![Screenshot_20230211_045358](https://user-images.githubusercontent.com/98753696/218272236-10996a2c-593e-46b7-a1a6-7094cc9d4dc3.png)
-
-
-The [1] is going to be for findallby which I will be changing. Please ignore for now. 
-
-![image](https://user-images.githubusercontent.com/98753696/217550580-17a22ce3-a662-4223-bd87-1b96221e8971.png)
-
 
