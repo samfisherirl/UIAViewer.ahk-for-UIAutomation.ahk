@@ -13,6 +13,18 @@ List of Changes:
 
 New keybind of f3 for generating code, macro creator is front and center.
 
+Basics: 
+
+This application helps navigate Windows desktop applications. 
+
+- Download all code 
+
+- Run viewer
+
+- F1 to scan UI items
+
+- F3 to generate code
+
 
  ![image](https://user-images.githubusercontent.com/98753696/219795364-63000373-8bed-49d9-93c2-e2cc2d801b00.png)
 
