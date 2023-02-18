@@ -26,7 +26,7 @@ This application helps navigate Windows desktop applications.
 - F3 to generate code
 
 
- ![image](https://user-images.githubusercontent.com/98753696/219795364-63000373-8bed-49d9-93c2-e2cc2d801b00.png)
+ ![image](https://user-images.githubusercontent.com/98753696/219829487-d62bd4bc-a708-410d-9deb-cb8c03ddff76.png)
 
 
 
