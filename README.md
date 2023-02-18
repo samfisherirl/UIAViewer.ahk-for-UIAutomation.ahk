@@ -30,5 +30,47 @@ This application helps navigate Windows desktop applications.
 
 
 
- ![image](https://user-images.githubusercontent.com/98753696/219795405-97e884fb-5437-4438-9145-222203e50a0a.png)
+       #Include lib\UIA_Interface.ahk
+       SetTitleMatchMode, 2
+       global UIA := UIA_Interface()
+       ;learn more here https://github.com/Descolada/UIAutomation/wiki/04.-Elements
 
+
+       el := WinExist(" github.com/Descolada/UIAutomation ahk_exe AutoHotkey.exe")
+
+
+       el := UI(el)
+       ; the handle can be re-used for various actions
+
+       Do_Click(el)
+
+
+       UI(el){
+          WinActivate, ahk_id %el%
+          WinWaitActive, ahk_id %el%
+         el := UIA.ElementFromHandle(el)
+           return el
+       }
+
+       Do_Click(el){
+         loop, 10
+         {
+         try {
+       el := el.FindFirstBy("ControlType=Document AND Name='Start capturing and press the F3 Key to add action.' AND AutomationId='41'",,2)
+              break
+          } catch e{
+             Sleep, 100
+            }
+         }
+
+       loop, 10
+         {
+         try {
+       el.Click()  
+              break
+          } catch e{
+             Sleep, 100
+            }
+         }
+
+         }
