@@ -1,9 +1,11 @@
-﻿#SingleInstance Force
+﻿#SingleInstance, Force
 #NoEnv
 SetWorkingDir %A_ScriptDir%
 SetBatchLines -1
 CoordMode, Mouse, Screen
 DetectHiddenWindows, On
+
+
 
 DeepSearchFromPoint := False ; Sets the default value for the deep search checkbox. When set to True (or checked), UIAviewer - github.com/Descolada/UIAutomation iterates through the whole UIA tree to find the smallest element from mouse point. This might be very slow with large trees.
 
@@ -19,9 +21,10 @@ _yoffset := 20
 _ysoffset := 3
 _minSplitterPosX := 100, _maxSplitterPosX := 500, _minSplitterPosY := 100, _maxSplitterPosY := 500, SplitterW = 5
 
-Gui Main: New, AlwaysOnTop Resize hwndMainGuiHwnd, UIAviewer - github.com/Descolada/UIAutomation
+Gui Main: New, +ToolWindow +0x800000 +0x860000 +0x840000 AlwaysOnTop Resize hwndMainGuiHwnd, UIAviewer - github.com/Descolada/UIAutomation
 Gui Main: Default
 
+Gui Color, 0xA0A0A0
 Gui Add, GroupBox, x8 y10 w302 h130 vGBWindowInfo, Window/Control Info
 Gui Add, Text, x18 y28 w30 vTextWinTitle, WinTitle:
 Gui Add, Edit, x65 yp-%_ysoffset% w235 vEditWinTitle, 
@@ -55,9 +58,11 @@ Gui Add, TreeView, x+5 y+5 w200 h400 hwndhMainTreeView vMainTreeView gMainTreeVi
 Gui Add, Button, xp+40 y+5 w192 vButRefreshTreeView gButRefreshTreeView +Disabled, Start capturing to show tree
 
 Gui, Tab, 1
+Gui Font,, Consolas
 Gui, Add, Text, x+10 y+10, Search function: 
 Gui, Add, DropDownList, x+10 yp-%_ysoffset% w190 vDDLMacroFunction, WaitElementExist|FindFirstBy||FindAllBy|No function
 Gui, Add, Text, x331 y+10, Element name:
+
 Gui, Add, Edit, x+15 yp-%_ysoffset% w70 vEditMacroElementName, el 
 Gui, Add, CheckBox, x+10 yp+%_ysoffset% w100 vCBMacroCaseSensitive Checked, Case sensitive
 Gui, Add, Text, x331 y+15, Match mode:
@@ -68,7 +73,7 @@ Gui, Add, Text, x+10 yp+%_ysoffset% , Action:
 Gui, Add, DropDownList, x+10 yp-1 w85 gDDLMacroAction vDDLMacroAction, Click||ControlClick|Click("left")|Highlight|SetValue|Do nothing
 
 
-Gui, Add, Text, x331 y+15, Category of Matching:
+Gui, Add, Text, x339 y+15, Category of Matching:
 Gui, Add, DropDownList, x+25 yp-%_ysoffset% w140 vMatchCategory, Title & Exe||Title|Exe|`ClassName
 
 ; new line of input data
@@ -84,11 +89,12 @@ value_for_top_of_code_generation=
 #Include lib\UIA_Interface.ahk
 SetTitleMatchMode, 2
 global UIA := UIA_Interface()
+;learn more here https://github.com/Descolada/UIAutomation/wiki/04.-Elements
 )
 
 			
 Gui, Add, Text, x331 y+10, Start capturing and press the F3 Key to add action.
-Gui, Add, Edit, x331 y+10 w275 h350 vEditMacroContent, %value_for_top_of_code_generation%
+Gui, Add, Edit, x331 y+10 w275 h350 gCopyAll vEditMacroContent, %value_for_top_of_code_generation%
 Gui, Tab
 
 Gui, Font, Bold
@@ -295,6 +301,19 @@ MainTreeView:
 			SB_SetText(" Path: " GetAccPathTopDown(Stored.Hwnd, "x" br.l " y" br.t " w" (br.r-br.l) " h" (br.b-br.t)), 1)
 		}
 	}
+	return
+
+;#@#############################
+
+CopyAll:
+	Sleep, 20
+	ClipBoard := ""
+	GuiControlGet, EditMacroContent
+		ClipBoard := EditMacroContent1
+		Send, {Ctrl Down}
+		Send, {a down}
+		send, {a up}
+		Send, {Ctrl up}
 	return
 
 DDLMacroAction:
@@ -744,14 +763,23 @@ ReverseContent(inp) {
 Esc::gosub ButCapture
  
 
+
+
+
+
+
+
 ~F3::
-	global DDLMacroActionValue, counting_functions
-	counting_functions := counting_functions + 1
-	if (counting_functions > 1) {
-		countfunctions := counting_functions
-	} else {
-		 countfunctions := "" 
-		 }
+
+		global DDLMacroActionValue, counting_functions
+		counting_functions := counting_functions + 1
+		if (counting_functions > 1) {
+			countfunctions := counting_functions
+		} else {
+			countfunctions := "" 
+			}
+			
+			
 	Gui Main: Default
 	GuiControlGet, FocusedTab,, TabsMain
 	if (FocusedTab != "Macro creator")
@@ -765,6 +793,8 @@ Esc::gosub ButCapture
 		GuiControlGet, MacroElementName,, EditMacroElementName
 		GuiControlGet, MacroTimeout,, EditMacroTimeout
 		GuiControlGet, MacroAction,, DDLMacroAction
+		MacroElementName := MacroElementName . countfunctions
+		
 		MacroContent := """ControlType=" UIA_Enum.UIA_ControlTypeId(Stored.Element.CurrentControlType) ((elName := Stored.Element.CurrentName) ? " AND Name='" SanitizeInput(elName) "'" : "") ((elAID := Stored.Element.CurrentAutomationId) ? " AND AutomationId='" SanitizeInput(elAID) "'" : "") """"
 		
 		loop_try_function=
